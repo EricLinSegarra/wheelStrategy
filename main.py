@@ -14,6 +14,7 @@ df_price = pd.read_parquet(data_path)
 
 # Ensure datetime index
 df_price.index = pd.to_datetime(df_price.index)
+print(df_price)
 
 # Generate $500 monthly contributions from the start to the end of dataset
 start_date = df_price.index.min().strftime("%Y-%m-%d")

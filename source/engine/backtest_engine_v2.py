@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def realistic_backtest(df_price: pd.DataFrame,
                        contributions: pd.Series,
                        initial_capital: float = 10000,
@@ -27,14 +28,15 @@ def realistic_backtest(df_price: pd.DataFrame,
         if date in contributions.index:
             capital += contributions.loc[date]
 
-        price = row["Close"]
-        vol = row["volatility"]
+        price = float(row["Close"])
+        vol = float(row["volatility"])
 
         # If no position, sell PUT
         if position is None:
             strike = price * (1 - strike_discount)
             premium = option_premium_pct * strike * shares_per_contract
             contracts = int(capital // (strike * shares_per_contract))
+
             income = contracts * premium
             capital += income
             expiry_date = date + pd.Timedelta(days=option_days_to_expiry)
@@ -74,9 +76,9 @@ def realistic_backtest(df_price: pd.DataFrame,
             position = None
 
         # Buy shares with leftover cash (DCA logic)
-        if capital > price:
+        if capital > price and price > 0:
             units = int(capital // price)
-            investment = units * price
+            investment = round(units * price, 2)
             shares += units
             capital -= investment
             log.append([date, capital, shares, "BUY_SHARES", 0, vol, None, None])
